@@ -16,7 +16,13 @@ public class ChatProtocol {
 
     public IServerStateProtocol getState() { return state; }
 
-    public void setState(IServerStateProtocol state) {this.state = state;}
+    public void setState(IServerStateProtocol state) {
+        if (state instanceof ConnectionState) {
+            this.state = new GetUserInfoState();
+        } else if (state instanceof GetUserInfoState) {
+            this.state = null;
+        }
+    }
 
     public String ExecuteProtocol(Socket socket) throws IOException {
         //if (this.state instanceof ConnectionState)
@@ -25,6 +31,15 @@ public class ChatProtocol {
             state = state.Execute(socket);
             if (state == null) {break;}
         }
+        // state.establishConnection
+        // state = new getUserInfo()
+        // state.Execute()
+        // state = new UpdateUser()
+        // state.Execute()
+        // state = new GetUserUpdate()
+        //state = new UpdateUser()
+        // state.Execute()
+        // state = new GetUserUpdate()
         return "";
     }
 }

@@ -25,6 +25,14 @@ public class GetUserInfoState extends IServerStateProtocol{
             }
         }
         System.out.println("userInformation: " + userInformation);
+        /*
+        if userInformation.instruction == state 3 {
+        return state 3
+        }
+        if userInfromation.instruction == stat 5 {
+        return state 5
+        }
+         */
         return null;
     }
 }
