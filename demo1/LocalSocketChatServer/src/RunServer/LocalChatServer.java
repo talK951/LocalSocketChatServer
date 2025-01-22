@@ -9,18 +9,13 @@ public class LocalChatServer extends Thread {
 
         ServerSocket serverSocket = new ServerSocket(8080);
 
-        while(true){
+        while (true){
             try{
 
                 Socket clientSocket = serverSocket.accept();
-                PrintWriter out =
-                        new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
-
-                ChatThread thread  = new ChatThread(out,in);
-
+                ChatThread thread  = new ChatThread(clientSocket);
                 thread.start();
+
             } catch (IOException e) {
                 System.out.println("Exception caught when trying to listen on port "
                         + 8080+ " or listening for a connection");

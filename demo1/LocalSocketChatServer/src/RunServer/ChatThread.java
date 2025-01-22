@@ -1,40 +1,23 @@
 package RunServer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.Socket;
 
 public class ChatThread extends Thread {
 
-    private PrintWriter out;
-    private BufferedReader in;
-    public ChatThread(PrintWriter out, BufferedReader in)
-    {
+    private Socket socket;
 
-        this.out = out;
-        this.in = in;
-
+    public ChatThread(Socket socket) throws IOException {
+        this.socket = socket;
     }
 
     @Override
     public void run() {
-        String inputLine, outputLine;
-
-        // Initiate conversation with client
         ChatProtocol cP = new ChatProtocol();
-        outputLine = cP.processInput(null);
-        out.println(outputLine);
-
-        while (true) {
-            try {
-                if (!((inputLine = in.readLine()) != null)) break;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            outputLine = cP.processInput(inputLine);
-            out.println(outputLine);
-            if (outputLine.equals("Bye."))
-                break;
+        try {
+            cP.ExecuteProtocol(socket);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,16 +1,15 @@
 package ServerStates;
 import RunServer.ChatProtocol;
 
+import java.io.IOException;
+import java.net.Socket;
+
 
 public abstract class IServerStateProtocol {
 
-    protected ChatProtocol chatProtocol;
-
-    public IServerStateProtocol(ChatProtocol chatProtocol)
-    {
-        this.chatProtocol = chatProtocol;
+    public IServerStateProtocol() {
     }
 
-    public abstract void Execute();
+    public abstract IServerStateProtocol Execute (Socket socket) throws IOException;
 
 }
