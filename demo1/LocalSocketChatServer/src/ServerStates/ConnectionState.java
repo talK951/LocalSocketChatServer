@@ -16,6 +16,9 @@ public class ConnectionState extends IServerStateProtocol{
 
     @Override
     public IServerStateProtocol Execute(Socket socket) throws IOException {
+
+
+
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true); // Writing to user
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream())); // Reading from user
 
