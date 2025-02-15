@@ -25,9 +25,15 @@ public class OnlineUsersStatusChecker extends Thread{
                     StandardWatchEventKinds.ENTRY_DELETE,
                     StandardWatchEventKinds.ENTRY_MODIFY);
 
+            StringBuilder listOfPeople = new StringBuilder();
+
             while((line = onlineReader.readLine()) != null){
-                out.println( tag + line);
+                listOfPeople.append("/").append(line);
+//                out.println(tag + "/" + line);
             }
+            onlineReader.close();
+            out.println(tag + listOfPeople);
+
             CheckForUserDrop dropTest = new CheckForUserDrop(socket);
             dropTest.start();
 
@@ -45,13 +51,17 @@ public class OnlineUsersStatusChecker extends Thread{
                         System.out.println("File deleted: " + event.context());
                     }
                     else if (event.kind() == StandardWatchEventKinds.ENTRY_MODIFY)
-
                     {
                         System.out.println("IM HERE3");
+                        StringBuilder listOfPeople2 = new StringBuilder();
                         String line2;
-                        while((line2 = onlineReader.readLine()) != null){
-                           out.println(tag + line2);
+                        BufferedReader oR = new BufferedReader(new FileReader("demo1/LocalSocketChatServer/HelperFiles/online-users.txt"));
+                        while((line2 = oR.readLine()) != null){
+                            listOfPeople2.append("/").append(line2);
+
                         }
+                        oR.close();
+                        out.println(tag + listOfPeople2);
 
                     }
                 }
