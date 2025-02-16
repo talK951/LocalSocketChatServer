@@ -1,7 +1,10 @@
 package Helpers;
+import DB.ChatManagerSingleton;
+
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.*;
+import java.util.Arrays;
 
 public class OnlineUsersStatusChecker extends Thread{
 
@@ -34,7 +37,7 @@ public class OnlineUsersStatusChecker extends Thread{
             onlineReader.close();
             out.println(tag + listOfPeople);
 
-            CheckForUserDrop dropTest = new CheckForUserDrop(socket);
+            SocketContentRouter dropTest = new SocketContentRouter(socket);
             dropTest.start();
 
             while (true) {
@@ -78,26 +81,48 @@ public class OnlineUsersStatusChecker extends Thread{
     }
 }
 
-class CheckForUserDrop extends Thread {
+class SocketContentRouter extends Thread {
     private BufferedReader in;
-    private static Socket dropSocket;
+    private PrintWriter out;
+    private static Socket socket;
+    private ChatManagerSingleton manager;
 
 
-    public CheckForUserDrop(Socket dropSocket) throws IOException {
-        this.dropSocket = dropSocket;
+    public SocketContentRouter(Socket socket) throws IOException {
+        this.socket = socket;
+        manager = ChatManagerSingleton.getInstance();
+        out = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     @Override
     public void run() {
         try {
-            BufferedReader onlineFileRead = new BufferedReader(new FileReader("demo1/LocalSocketChatServer/HelperFiles/online-users.txt"));
-
-            this.in = new BufferedReader(new InputStreamReader(dropSocket.getInputStream()));
             while (true) {
-                String line1 = in.readLine();  // Read the first line
-                if (line1 != null && line1.length() > 1 && line1.charAt(0) == 'c') {
+                String uiInstruction = in.readLine();  // Read the first line
+                if (uiInstruction != null && uiInstruction.length() > 1 && uiInstruction.charAt(0) == 'c') {
+                    deleteDataFromFile("demo1/LocalSocketChatServer/HelperFiles/online-users.txt",uiInstruction.substring(1));
+                }
+                if (uiInstruction != null && uiInstruction.length() > 1 && uiInstruction.charAt(0) == 's') {
+                    System.out.println("uiInstruction=" + uiInstruction);
+                    String[] rawData = uiInstruction.split("/");
+                    System.out.println("rawData=" + Arrays.toString(rawData));
+                    String convo = manager.GetChatConvo(rawData[1]);
+                    System.out.println("convo=" + convo);
+                    out.println(convo);
+                }
 
-                    deleteDataFromFile("demo1/LocalSocketChatServer/HelperFiles/online-users.txt",line1.substring(1));
+                if (uiInstruction != null && uiInstruction.length() > 1 && uiInstruction.charAt(0) == 'm') {
+                    System.out.println("uiInstruction=" + uiInstruction);
+                    String[] rawData = uiInstruction.split("/");
+                    System.out.println("rawData=" + Arrays.toString(rawData));
+                    String channelName = rawData[1];
+                    String hostname = rawData[2];
+                    String msg = rawData[3];
+                    manager.AddMsgToChat(channelName, hostname, msg);
+                    String response = manager.GetChatConvo(channelName);
+                    System.out.println("response=" + response);
+                    out.println(response);
                 }
             }
         } catch (Exception e) {
@@ -108,7 +133,7 @@ class CheckForUserDrop extends Thread {
 
 
     public static void deleteDataFromFile(String filePath, String dataToDelete) throws IOException {
-        PrintWriter out = new PrintWriter(dropSocket.getOutputStream(), true);
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
         try {
             // Read from the file

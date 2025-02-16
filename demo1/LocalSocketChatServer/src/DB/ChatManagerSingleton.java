@@ -51,6 +51,7 @@ public class ChatManagerSingleton {
 
     public String GetChatConvo(String chatName) {
         for (Chat c: chats) {
+            System.out.println(chats);
             if (c.name.equals(chatName)) {
                 return "m/" + c.toString();
             }
