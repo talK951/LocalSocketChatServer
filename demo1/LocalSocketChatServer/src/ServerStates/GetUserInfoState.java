@@ -1,5 +1,7 @@
 package ServerStates;
 
+import DB.ChatManagerSingleton;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -11,8 +13,6 @@ public class GetUserInfoState extends IServerStateProtocol{
         super();
     }
 
-
-
     @Override
     public IServerStateProtocol Execute(Socket socket) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream())); // Reading from user
@@ -21,7 +21,6 @@ public class GetUserInfoState extends IServerStateProtocol{
         {
             userInformation = in.readLine();
             if (userInformation != null) {
-
                 break;
             }
         }
@@ -37,7 +36,7 @@ public class GetUserInfoState extends IServerStateProtocol{
         }
 
         System.out.println("userInformation: " + userInformation);
-
+        ChatManagerSingleton.getInstance().CreateChats(userInformation);
         return new ServerUpdateState();
     }
 }

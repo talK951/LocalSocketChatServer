@@ -1,5 +1,7 @@
 package ServerStates;
 
+import DB.ChatManagerSingleton;
+import Helpers.ChatUpdateListener;
 import Helpers.OnlineUsersStatusChecker;
 
 import java.io.IOException;
@@ -15,6 +17,8 @@ public class ServerUpdateState  extends IServerStateProtocol{
         OnlineUsersStatusChecker onlineChecker = new OnlineUsersStatusChecker(socket);
         onlineChecker.start();
 
+        ChatUpdateListener updateListener = new ChatUpdateListener(socket);
+        updateListener.start();
         while(true){
 
         }
