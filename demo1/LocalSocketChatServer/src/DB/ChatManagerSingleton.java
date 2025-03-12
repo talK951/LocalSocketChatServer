@@ -39,6 +39,8 @@ public class ChatManagerSingleton {
         users.add(new User(hostName));
         Chat newChat = new Chat(users, hostName);
         chats.add(newChat);
+
+        System.out.println(chats);
     }
 
     public void AddMsgToChat(String channelName, String hostName, String msg) {
